@@ -34,3 +34,6 @@ build
 
 #Personal Files
 signing.properties
+library/libs/android-support-v4.jar
+
+library/project.properties
