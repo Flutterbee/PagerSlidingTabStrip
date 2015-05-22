@@ -29,12 +29,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.BackgroundColorSpan;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -90,10 +86,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private int indicatorHeight = 8;
     private int underlineHeight = 2;
     private int dividerPadding = 12;
-    private int tabPadding = 24;
+    private int tabPadding = 10;
     private int dividerWidth = 1;
 
-    private int tabTextSize = 12;
+    private int tabTextSize = 15;
     private int tabTextColor = 0xFF666666;
     private int tabDeactivateTextColor = 0xFFCCCCCC;
 
@@ -239,47 +235,48 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     private void addTabLayout(int i, String s) {
+
+        String[] tabStrings = s.split(",");
+        String title = s.split(",")[0];
+        String counter = null;
+        if (tabStrings.length > 1)
+            counter = s.split(",")[1];
         /* New Linear layout for the text view and counter view*/
         LinearLayout tabLayout = new LinearLayout(getContext());
         tabLayout.setOrientation(LinearLayout.HORIZONTAL);
         tabLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         tabLayout.setGravity(Gravity.CENTER);
         /* Add text view for the title text */
-        TextView tab = new TextView(getContext());
-        tab.setSingleLine();
-        tab.setText(s.substring(0, s.length() - 1));
-        tabLayout.addView(tab);
+        addTextTab(tabLayout, title);
         /* Add counter text view to the linear layout*/
-        addCounterTab(tabLayout, Integer.parseInt(s.substring(s.length() - 1), s.length()));
+        if (counter != null)
+            addCounterTab(tabLayout, counter);
         /* Add the linear layout*/
         addTab(i, tabLayout);
     }
 
 
-    private void addTextTab(final int position, String title) {
+    private void addTextTab(LinearLayout tabLayout, String title) {
 
         TextView tab = new TextView(getContext());
         tab.setText(title);
         tab.setGravity(Gravity.CENTER);
         tab.setSingleLine();
-        addTab(position, tab);
+        tabLayout.addView(tab);
     }
 
-    private void addCounterTab(LinearLayout tabLayout, int counter) {
+    private void addCounterTab(LinearLayout tabLayout, String counter) {
         /* Counter text view*/
         TextView counterTextView = new TextView(getContext());
-        /* Set padding */
-        counterTextView.setPadding(15, 5, 15, 5);
-        /* Set margins */
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        params.setMargins(12, 0, 0, 0);
-        counterTextView.setLayoutParams(params);
         /* Set text */
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(27, 27);
         counterTextView.setText(counter + "");
         /* Set text color */
         counterTextView.setTextColor(Color.WHITE);
+        /* Set font size */
+        counterTextView.setTextSize(15);
         /* Set background color */
-        counterTextView.setBackgroundColor(getResources().getColor(R.color.counterBackground));
+        counterTextView.setBackground(getResources().getDrawable(R.drawable.background_counter));
         /* Add counter text view to the linear layout */
         tabLayout.addView(counterTextView);
     }
@@ -300,8 +297,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 pager.setCurrentItem(position);
             }
         });
-
-        tab.setPadding(tabPadding, 0, tabPadding, 0);
 
         tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
     }
@@ -346,12 +341,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         for (int i = 0; i < tabCount; i++) {
 
             LinearLayout linearLayout = (LinearLayout) tabsContainer.getChildAt(i);
-            View v = linearLayout.getChildAt(0);
-            TextView tab = (TextView) v;
-            tab.setTextColor(position == i ? tabTextColor : tabDeactivateTextColor);
+            View v = linearLayout.getChildAt(i);
+            /* Update the text title */
+            TextView title = (TextView) v;
+            title.setTextColor(position == i ? tabTextColor : tabDeactivateTextColor);
             v = linearLayout.getChildAt(1);
-            TextView counter = (TextView) v;
-            counter.setBackgroundColor(position == i ? tabTextColor : tabDeactivateTextColor);
+            /* If counter view exists update the background color */
+            if (v != null) {
+                TextView counter = (TextView) v;
+                counter.setBackgroundColor(position == i ? tabTextColor : tabDeactivateTextColor);
+            }
         }
     }
 
