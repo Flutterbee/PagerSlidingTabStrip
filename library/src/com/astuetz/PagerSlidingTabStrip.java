@@ -33,18 +33,15 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.BaseSavedState;
-import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout.LayoutParams;
-
-import java.util.Locale;
 
 import com.astuetz.pagerslidingtabstrip.R;
+
+import java.util.Locale;
 
 public class PagerSlidingTabStrip extends HorizontalScrollView {
 
@@ -105,6 +102,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private Locale locale;
 	
 	private boolean tabSwitch;
+	
+	private int currentTabIndex = 0;
 	
 	public PagerSlidingTabStrip(Context context) {
 		this(context, null);
@@ -279,7 +278,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 				TextView tab = (TextView) v;
 				tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
 				tab.setTypeface(tabTypeface, tabTypefaceStyle);
-				tab.setTextColor(tabSwitch && i != 0 ? tabDeactivateTextColor : tabTextColor);
+				tab.setTextColor(tabSwitch && i != currentTabIndex ? tabDeactivateTextColor : tabTextColor);
 				tab.setPadding(tabPadding, 0, tabPadding, 0);
 
 				// setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
@@ -293,7 +292,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 				}
 			} else if (v instanceof ImageButton) {
 				ImageButton tab = (ImageButton) v;
-				tab.setSelected(tabSwitch && i == 0 ? true : false);
+				tab.setSelected(tabSwitch && i == currentTabIndex ? true : false);
 			}
 		}
 	}
@@ -311,6 +310,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 				v.setSelected(position == i ? true : false);
 			}
 		}
+		
+		currentTabIndex = position;
 	}
 
 	private void scrollToChild(int position, int offset) {
