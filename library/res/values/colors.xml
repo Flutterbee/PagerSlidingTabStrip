@@ -4,4 +4,6 @@
     <color name="activate_text_color">#FF666666</color>
     <color name="deactivate_text_color">#FFCCCCCC</color>
     <color name="transparent">#00000000</color>
+    <color name="counterBackgroundOrange">#f37430</color>
+    <color name="counterBackgroundGrey">#8e8e8e</color>
 </resources>
