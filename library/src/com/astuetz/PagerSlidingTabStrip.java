@@ -231,11 +231,17 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         addTextTab(tabLayout, title);
         /* Add counter text view to the linear layout*/
         if (counter != null)
+            /* Add a counter textview to the tab to the right of title text view */
             addCounterTab(tabLayout, counter);
         /* Add the linear layout*/
         addTab(i, tabLayout);
     }
 
+    /**
+     * Add a text view to the tab's linear layout to display the title of the tab
+     * @param tabLayout the linear layout of the tab
+     * @param title the title to be displayed on the tab
+     */
     private void addTextTab(LinearLayout tabLayout, String title) {
 
         TextView tab = new TextView(getContext());
@@ -245,6 +251,11 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         tabLayout.addView(tab);
     }
 
+    /**
+     * Adds a counter text view to the Tab's linear layout
+     * @param tabLayout the linear layout of the tab
+     * @param counter the counter value to be displayed in the counter text view
+     */
     private void addCounterTab(LinearLayout tabLayout, String counter) {
         /* Counter text view*/
         TextView counterTextView = new TextView(getContext());
