@@ -89,14 +89,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	private int tabTextSize = 12;
 	private int tabTextColor = 0xFF666666;
-	private int tabDeactivateTextColor = 0xFFCCCCCC;
+    private int tabDeactivateTextColor = 0xFFCCCCCC;
 	
 	private Typeface tabTypeface = null;
 	private int tabTypefaceStyle = Typeface.BOLD;
 
 	private int lastScrollX = 0;
 
-	private int tabBackgroundResId = R.drawable.background_tab;
+    private int tabBackgroundResId = R.drawable.background_tab;
+    private int tabActivatedBackgroundResId = R.drawable.background_tab;
 	private int transparentColorId = R.color.transparent;
 
 	private Locale locale;
@@ -154,13 +155,14 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		underlineHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsUnderlineHeight, underlineHeight);
 		dividerPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsDividerPadding, dividerPadding);
 		tabPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsTabPaddingLeftRight, tabPadding);
-		tabBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_pstsTabBackground, tabBackgroundResId);
+        tabBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_pstsTabBackground, tabBackgroundResId);
+        tabActivatedBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_pstsActivatedTabBackground, tabActivatedBackgroundResId);
 		shouldExpand = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsShouldExpand, shouldExpand);
 		scrollOffset = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsScrollOffset, scrollOffset);
 		textAllCaps = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsTextAllCaps, textAllCaps);
 		tabSwitch = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsTabSwitch, tabSwitch);
 		tabTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsActivateTextColor, tabTextColor);
-		tabDeactivateTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsDeactivateTextColor, tabDeactivateTextColor);
+        tabDeactivateTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_pstsDeactivateTextColor, tabDeactivateTextColor);
 
 		a.recycle();
 
@@ -279,7 +281,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 				tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
 				tab.setTypeface(tabTypeface, tabTypefaceStyle);
 				tab.setTextColor(tabSwitch && i != currentTabIndex ? tabDeactivateTextColor : tabTextColor);
-				tab.setPadding(tabPadding, 0, tabPadding, 0);
+                tab.setBackgroundResource(tabSwitch && i != currentTabIndex ? transparentColorId : tabActivatedBackgroundResId);
+                tab.setPadding(tabPadding, 0, tabPadding, 0);
 
 				// setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
 				// pre-ICS-build
@@ -305,8 +308,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			
 			if (v instanceof TextView) {
 				TextView tab = (TextView) v;
-				tab.setTextColor(position == i ? tabTextColor : tabDeactivateTextColor); 
-			} else {
+				tab.setTextColor(position == i ? tabTextColor : tabDeactivateTextColor);
+                tab.setBackgroundResource(position == i ? tabActivatedBackgroundResId : transparentColorId);
+                tab.setPadding(tabPadding, 0, tabPadding, 0);
+            } else {
 				v.setSelected(position == i ? true : false);
 			}
 		}
@@ -544,13 +549,21 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		updateTabStyles();
 	}
 
-	public void setTabBackground(int resId) {
-		this.tabBackgroundResId = resId;
-	}
+    public void setTabBackground(int resId) {
+        this.tabBackgroundResId = resId;
+    }
 
-	public int getTabBackground() {
-		return tabBackgroundResId;
-	}
+    public int getTabBackground() {
+        return tabBackgroundResId;
+    }
+
+    public void setActvatedTabBackground(int resId) {
+        this.tabActivatedBackgroundResId = resId;
+    }
+
+    public int getActvatedTabBackground() {
+        return tabActivatedBackgroundResId;
+    }
 
 	public void setTabPaddingLeftRight(int paddingPx) {
 		this.tabPadding = paddingPx;
