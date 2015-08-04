@@ -33,18 +33,15 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.BaseSavedState;
-import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout.LayoutParams;
-
-import java.util.Locale;
 
 import com.astuetz.pagerslidingtabstrip.R;
+
+import java.util.Locale;
 
 public class PagerSlidingTabStrip extends HorizontalScrollView {
 
@@ -100,11 +97,14 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private int lastScrollX = 0;
 
     private int tabBackgroundResId = R.drawable.background_tab;
+    private int tabActivatedBackgroundResId = R.drawable.background_tab;
     private int transparentColorId = R.color.transparent;
 
     private Locale locale;
 
     private boolean tabSwitch;
+
+    private int currentTabIndex = 0;
 
     public PagerSlidingTabStrip(Context context) {
         this(context, null);
@@ -156,6 +156,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         dividerPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsDividerPadding, dividerPadding);
         tabPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsTabPaddingLeftRight, tabPadding);
         tabBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_pstsTabBackground, tabBackgroundResId);
+        tabActivatedBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_pstsActivatedTabBackground, tabActivatedBackgroundResId);
         shouldExpand = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsShouldExpand, shouldExpand);
         scrollOffset = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsScrollOffset, scrollOffset);
         textAllCaps = a.getBoolean(R.styleable.PagerSlidingTabStrip_pstsTextAllCaps, textAllCaps);
@@ -279,7 +280,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 TextView tab = (TextView) v;
                 tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
                 tab.setTypeface(tabTypeface, tabTypefaceStyle);
-                tab.setTextColor(tabSwitch && i != 0 ? tabDeactivateTextColor : tabTextColor);
+                tab.setTextColor(tabSwitch && i != currentTabIndex ? tabDeactivateTextColor : tabTextColor);
+                tab.setBackgroundResource(tabSwitch && i != currentTabIndex ? transparentColorId : tabActivatedBackgroundResId);
                 tab.setPadding(tabPadding, 0, tabPadding, 0);
 
                 // setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
@@ -293,7 +295,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 }
             } else if (v instanceof ImageButton) {
                 ImageButton tab = (ImageButton) v;
-                tab.setSelected(tabSwitch && i == 0 ? true : false);
+                tab.setSelected(tabSwitch && i == currentTabIndex ? true : false);
             }
         }
     }
@@ -307,10 +309,14 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             if (v instanceof TextView) {
                 TextView tab = (TextView) v;
                 tab.setTextColor(position == i ? tabTextColor : tabDeactivateTextColor);
+                tab.setBackgroundResource(position == i ? tabActivatedBackgroundResId : transparentColorId);
+                tab.setPadding(tabPadding, 0, tabPadding, 0);
             } else {
                 v.setSelected(position == i ? true : false);
             }
         }
+
+        currentTabIndex = position;
     }
 
     private void scrollToChild(int position, int offset) {
@@ -551,6 +557,14 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         return tabBackgroundResId;
     }
 
+    public void setActvatedTabBackground(int resId) {
+        this.tabActivatedBackgroundResId = resId;
+    }
+
+    public int getActvatedTabBackground() {
+        return tabActivatedBackgroundResId;
+    }
+
     public void setTabPaddingLeftRight(int paddingPx) {
         this.tabPadding = paddingPx;
         updateTabStyles();
@@ -621,5 +635,4 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             }
         };
     }
-
 }
