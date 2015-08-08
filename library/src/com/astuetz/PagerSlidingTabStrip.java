@@ -185,6 +185,14 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	public void setOnPageChangeListener(OnPageChangeListener listener) {
 		this.delegatePageListener = listener;
 	}
+	
+	/**
+     	* This method return the tabContainer layout so as to make the tabs nonclickable when orderplace is in progress.
+     	* @return LinearLayout containing the tabs.
+     	*/
+    	public LinearLayout getTabsContainer() {
+        	return tabsContainer;
+    	}
 
 	public void notifyDataSetChanged() {
 
